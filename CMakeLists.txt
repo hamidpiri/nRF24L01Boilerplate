@@ -60,7 +60,6 @@ target_include_directories(nRF24L01Boilerplate PRIVATE
 # Add any user requested libraries
 target_link_libraries(nRF24L01Boilerplate 
         hardware_spi
-        pico_cyw43_arch_none
         )
 
 pico_add_extra_outputs(nRF24L01Boilerplate)
