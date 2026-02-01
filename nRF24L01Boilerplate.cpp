@@ -63,6 +63,7 @@ uint8_t ReadRegisterValue(uint8_t regAddress, size_t length)
     static uint8_t buffer_Read[8];
     memset(buffer_Read, 0, sizeof(buffer_Read));
     csn_low();
+    printf("Reading Register 0x%02X...\n", regAddress);
     spi_write_read_blocking(SPI_PORT, (uint8_t *)(R_REGISTER & regAddress), &buffer_Read[0], 1);
     csn_high();
     return buffer_Read[0];
@@ -72,28 +73,61 @@ int main()
 {
     stdio_init_all();
 
-    // // SPI initialisation. This example will use SPI at 1MHz.
-    // spi_init(SPI_PORT, 1000 * 1000);
-    // gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    // gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
-    // gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
-    // gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
+    // SPI initialisation. This example will use SPI at 1MHz.
+    spi_init(SPI_PORT, 1000 * 1000);
+    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
+    gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
 
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
     gpio_put(LED_PIN, 1);
 
-    // // Chip select is active-low, so we'll initialise it to a driven-high state
-    // gpio_set_dir(PIN_CS, GPIO_OUT);
-    // gpio_put(PIN_CS, 1);
-    // For more examples of SPI use see https://github.com/raspberrypi/pico-examples/tree/master/spi
+    // Chip select is active-low, so we'll initialise it to a driven-high state
+    gpio_set_dir(PIN_CS, GPIO_OUT);
+    gpio_put(PIN_CS, 1);
+    // For more examples of SPI use see https : // github.com/raspberrypi/pico-examples/tree/master/spi
 
     while (true)
     {
 
-        gpio_put(LED_PIN, 1);
-        sleep_ms(500);
-        gpio_put(LED_PIN, 0);
-        sleep_ms(500);
+        printf("Enter register address (hex): ");
+        char input[3];
+
+        int i = 0;
+        int ch;
+        // Read characters until newline or buffer full
+        while (i < sizeof(input) - 1)
+        {
+            ch = getchar();
+            if (ch == '\n' || ch == '\r')
+            {
+                break;
+            }
+            input[i++] = (char)ch;
+        }
+        input[i] = '\0'; // Null-terminate string
+
+        // Manual hex string to uint8_t conversion (no strtol)
+        uint8_t regAddr = 0;
+        for (int j = 0; j < i; j++)
+        {
+            regAddr <<= 4;
+            if (input[j] >= '0' && input[j] <= '9')
+                regAddr |= (input[j] - '0');
+            else if (input[j] >= 'A' && input[j] <= 'F')
+                regAddr |= (input[j] - 'A' + 10);
+            else if (input[j] >= 'a' && input[j] <= 'f')
+                regAddr |= (input[j] - 'a' + 10);
+            else
+                break; // Invalid character
+        }
+
+        printf("You entered: %s\n", input);
+        printf("Hex value: 0x%02X\n", regAddr);
+
+        uint8_t regValue = ReadRegisterValue(regAddr, 1);
+        printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
     }
 }
