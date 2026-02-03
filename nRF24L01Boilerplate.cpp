@@ -52,6 +52,7 @@
 #define RX_PW_P3 0x14
 #define RX_PW_P4 0x15
 #define RX_PW_P5 0x16
+#define NOP 0xFF
 #define FIFO_STATUS (1 << 5)
 /***Register Addresses***/
 
@@ -61,12 +62,15 @@ static inline void csn_high() { gpio_put(PIN_CS, 1); }
 uint8_t ReadRegisterValue(uint8_t regAddress, size_t length)
 {
     static uint8_t buffer_Read[8];
+    uint8_t cmd = R_REGISTER | (regAddress & 0x1F);
+    uint8_t nop = NOP;
     memset(buffer_Read, 0, sizeof(buffer_Read));
     csn_low();
     printf("Reading Register 0x%02X...\n", regAddress);
-    spi_write_read_blocking(SPI_PORT, (uint8_t *)(R_REGISTER & regAddress), &buffer_Read[0], 1);
+    spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
+    spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
     csn_high();
-    return buffer_Read[0];
+    return buffer_Read[1];
 }
 
 int main()
