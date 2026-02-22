@@ -2,6 +2,8 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include <string.h>
+// #include "./register.cpp"
+
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
 // Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
@@ -24,7 +26,7 @@
 #define R_RX_PL_WID 0B01100000
 #define W_ACK_PAYLOAD 0B10101000
 #define W_TX_PAYLOAD_NO_ACK 0B10110000
-#define NOP 0B11111111
+// #define NOP 0B11111111
 /***NRF24L01 Commands***/
 
 /***Register Addresses***/
