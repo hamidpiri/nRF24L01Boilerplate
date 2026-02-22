@@ -2,7 +2,8 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include <string.h>
-// #include "./register.cpp"
+#include "./register.hpp"
+#include <bitset>
 
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
@@ -132,8 +133,16 @@ int main()
 
         printf("You entered: %s\n", input);
         printf("Hex value: 0x%02X\n", regAddr);
+        printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
+
+        printf("Enter bit number to read (0-7): ");
+        uint8_t bitNum = getchar() - '0'; // Convert char to int
+        printf("You entered bit number: %d\n", bitNum);
 
         uint8_t regValue = ReadRegisterValue(regAddr, 1);
+        uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
+        Register reg(regValue);
+        printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
         printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
     }
 }
