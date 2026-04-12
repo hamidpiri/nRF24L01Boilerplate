@@ -59,29 +59,6 @@
 #define FIFO_STATUS (1 << 5)
 /***Register Addresses***/
 
-static inline void csn_low() { gpio_put(PIN_CS, 0); }
-static inline void csn_high() { gpio_put(PIN_CS, 1); }
-
-uint8_t ReadRegisterValue(uint8_t regAddress, size_t length)
-{
-    static uint8_t buffer_Read[8];
-    uint8_t cmd = R_REGISTER | (regAddress & 0x1F);
-    uint8_t nop = NOP;
-    memset(buffer_Read, 0, sizeof(buffer_Read));
-    csn_low();
-    printf("Reading Register 0x%02X...\n", regAddress);
-    spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
-    spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
-    csn_high();
-    return buffer_Read[1];
-}
-
-uint8_t WriteRegisterValue(uint8_t regAddress)
-{
-    static uint8_t buffer_Read[8];
-    uint8_t cmd = W_REGISTER | (0);
-}
-
 int main()
 {
     stdio_init_all();
@@ -146,15 +123,16 @@ int main()
             printf("Hex value: 0x%02X\n", regAddr);
             printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
 
-            printf("Enter bit number to read (0-7): ");
-            uint8_t bitNum = getchar() - '0'; // Convert char to int
-            printf("You entered bit number: %d\n", bitNum);
-
-            uint8_t regValue = ReadRegisterValue(regAddr, 1);
+            Register reg(regAddr);
+            uint8_t regValue = reg.ReadRegisterValue();
             uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
-            Register reg(regValue);
-            printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
             printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
+            printf("Register 0x%02X Binary value: 0b%s\n", regAddr, std::bitset<8>(regValue).to_string().c_str());
+
+            // printf("Enter bit number to read (0-7): ");
+            // uint8_t bitNum = getchar() - '0'; // Convert char to int
+            // printf("You entered bit number: %d\n", bitNum);
+            // printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
         }
         else if (selection == '1')
         {
