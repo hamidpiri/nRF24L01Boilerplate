@@ -17,7 +17,7 @@
 
 /***NRF24L01 Commands***/
 #define R_REGISTER 0B00000000
-#define W_REGISTER 0B001AAAAA
+#define W_REGISTER 0B00100000
 #define R_RX_PAYLOAD 0B01100001
 #define W_TX_PAYLOAD 0B10100000
 #define FLUSH_TX 0B11100001
@@ -76,6 +76,12 @@ uint8_t ReadRegisterValue(uint8_t regAddress, size_t length)
     return buffer_Read[1];
 }
 
+uint8_t WriteRegisterValue(uint8_t regAddress)
+{
+    static uint8_t buffer_Read[8];
+    uint8_t cmd = W_REGISTER | (0);
+}
+
 int main()
 {
     stdio_init_all();
@@ -99,50 +105,95 @@ int main()
     while (true)
     {
 
-        printf("Enter register address (hex): ");
-        char input[3];
-
-        int i = 0;
-        int ch;
-        // Read characters until newline or buffer full
-        while (i < sizeof(input) - 1)
+        printf("Write 0 for read or 1 for write");
+        char selection = getchar();
+        if (selection == '0')
         {
-            ch = getchar();
-            if (ch == '\n' || ch == '\r')
+
+            printf("Enter register address (hex): ");
+            char input[3];
+
+            int i = 0;
+            int ch;
+            // Read characters until newline or buffer full
+            while (i < sizeof(input) - 1)
             {
-                break;
+                ch = getchar();
+                if (ch == '\n' || ch == '\r')
+                {
+                    break;
+                }
+                input[i++] = (char)ch;
             }
-            input[i++] = (char)ch;
-        }
-        input[i] = '\0'; // Null-terminate string
+            input[i] = '\0'; // Null-terminate string
 
-        // Manual hex string to uint8_t conversion (no strtol)
-        uint8_t regAddr = 0;
-        for (int j = 0; j < i; j++)
+            // Manual hex string to uint8_t conversion (no strtol)
+            uint8_t regAddr = 0;
+            for (int j = 0; j < i; j++)
+            {
+                regAddr <<= 4;
+                if (input[j] >= '0' && input[j] <= '9')
+                    regAddr |= (input[j] - '0');
+                else if (input[j] >= 'A' && input[j] <= 'F')
+                    regAddr |= (input[j] - 'A' + 10);
+                else if (input[j] >= 'a' && input[j] <= 'f')
+                    regAddr |= (input[j] - 'a' + 10);
+                else
+                    break; // Invalid character
+            }
+
+            printf("You entered: %s\n", input);
+            printf("Hex value: 0x%02X\n", regAddr);
+            printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
+
+            printf("Enter bit number to read (0-7): ");
+            uint8_t bitNum = getchar() - '0'; // Convert char to int
+            printf("You entered bit number: %d\n", bitNum);
+
+            uint8_t regValue = ReadRegisterValue(regAddr, 1);
+            uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
+            Register reg(regValue);
+            printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
+            printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
+        }
+        else if (selection == '1')
         {
-            regAddr <<= 4;
-            if (input[j] >= '0' && input[j] <= '9')
-                regAddr |= (input[j] - '0');
-            else if (input[j] >= 'A' && input[j] <= 'F')
-                regAddr |= (input[j] - 'A' + 10);
-            else if (input[j] >= 'a' && input[j] <= 'f')
-                regAddr |= (input[j] - 'a' + 10);
-            else
-                break; // Invalid character
+
+            printf("Enter register address (hex): ");
+            char input[3];
+
+            int i = 0;
+            int ch;
+            // Read characters until newline or buffer full
+            while (i < sizeof(input) - 1)
+            {
+                ch = getchar();
+                if (ch == '\n' || ch == '\r')
+                {
+                    break;
+                }
+                input[i++] = (char)ch;
+            }
+            input[i] = '\0'; // Null-terminate string
+
+            // Manual hex string to uint8_t conversion (no strtol)
+            uint8_t regAddr = 0;
+            for (int j = 0; j < i; j++)
+            {
+                regAddr <<= 4;
+                if (input[j] >= '0' && input[j] <= '9')
+                    regAddr |= (input[j] - '0');
+                else if (input[j] >= 'A' && input[j] <= 'F')
+                    regAddr |= (input[j] - 'A' + 10);
+                else if (input[j] >= 'a' && input[j] <= 'f')
+                    regAddr |= (input[j] - 'a' + 10);
+                else
+                    break; // Invalid character
+            }
+
+            printf("You entered: %s\n", input);
+            printf("Hex value: 0x%02X\n", regAddr);
+            Register regToWrite(regAddr);
         }
-
-        printf("You entered: %s\n", input);
-        printf("Hex value: 0x%02X\n", regAddr);
-        printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
-
-        printf("Enter bit number to read (0-7): ");
-        uint8_t bitNum = getchar() - '0'; // Convert char to int
-        printf("You entered bit number: %d\n", bitNum);
-
-        uint8_t regValue = ReadRegisterValue(regAddr, 1);
-        uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
-        Register reg(regValue);
-        printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
-        printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
     }
 }
