@@ -128,11 +128,6 @@ int main()
             uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
             printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
             printf("Register 0x%02X Binary value: 0b%s\n", regAddr, std::bitset<8>(regValue).to_string().c_str());
-
-            // printf("Enter bit number to read (0-7): ");
-            // uint8_t bitNum = getchar() - '0'; // Convert char to int
-            // printf("You entered bit number: %d\n", bitNum);
-            // printf("%dth bit of register 0x%02X is: %d\n", bitNum, regAddr, reg.ReadBit(bitNum));
         }
         else if (selection == '1')
         {
