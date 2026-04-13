@@ -164,9 +164,9 @@ int main()
                     break; // Invalid character
             }
 
-            printf("You entered: %s\n", input);
-            printf("Hex value: 0x%02X\n", regAddr);
+            printf("You entered: 0x%02X\n", regAddr);
             Register regToWrite(regAddr);
+            regToWrite.WriteRegisterValue(0x02);
         }
     }
 }
