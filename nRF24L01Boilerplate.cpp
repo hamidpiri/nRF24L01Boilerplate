@@ -171,7 +171,6 @@ int main()
             config.MASK_RX_DR = 1;
 
             nrfdevice nrfdevice;
-            // nrfdevice.
         }
     }
 }
