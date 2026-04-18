@@ -1,9 +1,13 @@
 #include "config.hpp"
 #include "en_aa.hpp"
-class nrfdevice : public config
+#include "setup_aw.hpp"
+class nrfdevice
 {
 public:
-    nrfdevice() : config()
+    config config_register;
+    enaa enaa_register;
+    setupaw setupaw;
+    nrfdevice()
     {
     }
 
