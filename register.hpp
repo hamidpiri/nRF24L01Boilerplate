@@ -1,3 +1,6 @@
+// #ifndef REGISTER_H
+// #define REGISTER_H
+
 /***NRF24L01 Commands***/
 #define R_REGISTER 0B00000000
 #define W_REGISTER 0B00100000
@@ -20,10 +23,11 @@
 #define LED_PIN 25
 class Register
 {
-    uint8_t address;
-    uint8_t value;
 
 public:
+    uint8_t address;
+    uint8_t value;
+    // Give me the address of desired register
     Register(uint8_t address)
     {
         this->address = address;

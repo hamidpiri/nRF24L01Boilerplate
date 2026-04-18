@@ -2,8 +2,10 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include <string.h>
-#include "./register.hpp"
 #include <bitset>
+// #include "./register.hpp"
+#include "config.hpp"
+// #include "en_aa.hpp"
 
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
@@ -165,8 +167,9 @@ int main()
             }
 
             printf("You entered: 0x%02X\n", regAddr);
-            Register regToWrite(regAddr);
-            regToWrite.WriteRegisterValue(0x02);
+
+            config config;
+            config.MASK_RX_DR = 1;
         }
     }
 }
