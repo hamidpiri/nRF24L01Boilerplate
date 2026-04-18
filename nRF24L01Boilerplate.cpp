@@ -3,9 +3,8 @@
 #include "hardware/spi.h"
 #include <string.h>
 #include <bitset>
-// #include "./register.hpp"
-#include "config.hpp"
-// #include "en_aa.hpp"
+
+#include "nrf_device.hpp"
 
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
@@ -170,6 +169,9 @@ int main()
 
             config config;
             config.MASK_RX_DR = 1;
+
+            nrfdevice nrfdevice;
+            // nrfdevice.
         }
     }
 }
