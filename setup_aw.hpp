@@ -1,5 +1,7 @@
+#ifndef REGISTER_HPP
+#define REGISTER_HPP
 #include "register.hpp"
-
+#endif
 class setupaw : public Register
 {
 

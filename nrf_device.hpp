@@ -4,11 +4,19 @@
 class nrfdevice
 {
 public:
-    config config_register;
-    enaa enaa_register;
-    setupaw setupaw;
+    // enaa enaa_register;
+    // setupaw setupaw;
     nrfdevice()
     {
+    }
+
+    bool powerup()
+    {
+        config config_register;
+        config_register.setPWR_UP(1);
+        config_register.UpdateSelf();
+        printf("Device powered up!\n");
+        return true;
     }
 
 private:

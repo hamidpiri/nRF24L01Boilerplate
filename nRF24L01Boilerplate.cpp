@@ -167,10 +167,8 @@ int main()
 
             printf("You entered: 0x%02X\n", regAddr);
 
-            config config;
-            config.MASK_RX_DR = 1;
-
             nrfdevice nrfdevice;
+            nrfdevice.powerup();
         }
     }
 }
