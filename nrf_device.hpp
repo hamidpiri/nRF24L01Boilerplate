@@ -1,12 +1,15 @@
 #include "config.hpp"
 #include "en_aa.hpp"
 #include "setup_aw.hpp"
+#include "en_rxaddr.hpp"
+
 class nrfdevice
 {
 public:
     // enaa enaa_register;
     // setupaw setupaw;
     config config_register;
+    en_rxaddr dataPipeAddressRegister;
     enum deviceMode
     {
         RX = false,
@@ -36,6 +39,14 @@ public:
         config_register.setPRIM_RX(false);
         config_register.UpdateSelf();
         return false;
+    }
+
+    bool EnableDataPipe(int pipeNumber)
+    {
+        void (*EnableDataPipe5)(bool);
+        EnableDataPipe5 = ;
+        // dataPipeAddressRegister.
+        return true;
     }
 
 private:
