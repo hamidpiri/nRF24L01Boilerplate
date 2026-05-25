@@ -167,9 +167,11 @@ int main()
 
             printf("You entered: 0x%02X\n", regAddr);
 
+            // test
             nrfdevice nrfdevice;
             // printf(nrfdevice.Mode.TX);
             nrfdevice.SetMode(nrfdevice::RX);
+            nrfdevice.EnableDataPipe(5);
             nrfdevice.powerup();
         }
     }

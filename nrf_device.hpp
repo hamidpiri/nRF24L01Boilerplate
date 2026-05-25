@@ -43,9 +43,7 @@ public:
 
     bool EnableDataPipe(int pipeNumber)
     {
-        void (*EnableDataPipe5)(bool);
-        EnableDataPipe5 = ;
-        // dataPipeAddressRegister.
+        dataPipeAddressRegister.setPipeNumber(pipeNumber);
         return true;
     }
 
