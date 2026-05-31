@@ -10,12 +10,13 @@
 class rx_pw_p0 : public Register
 {
 public:
-    rx_pw_p0() : Register(0x0A) {}
-    bool SetTx_ADDR(uint64_t address = 0x10)
+    rx_pw_p0() : Register(0x11) {}
+    bool SetRX_PW_P0(int pipeWidth)
     {
-        RX_ADDR_P0 = address;
+        RX_PW_P0 = address;
+        return true;
     }
 
 private:
-    uint32_t RX_ADDR_P0;
+    uint32_t RX_PW_P0;
 };
