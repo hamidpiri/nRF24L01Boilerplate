@@ -2,6 +2,7 @@
 #include "en_aa.hpp"
 #include "setup_aw.hpp"
 #include "en_rxaddr.hpp"
+#include "rx_addr_p0.hpp"
 
 class nrfdevice
 {
@@ -10,6 +11,7 @@ public:
     // setupaw setupaw;
     config config_register;
     en_rxaddr dataPipeAddressRegister;
+    rx_addr_p0 rx_addr_p0_register;
     enum deviceMode
     {
         RX = false,
@@ -44,6 +46,12 @@ public:
     bool EnableDataPipe(int pipeNumber)
     {
         dataPipeAddressRegister.setPipeNumber(pipeNumber);
+        return true;
+    }
+
+    bool SetPipe0Address(uint64_t address)
+    {
+        rx_addr_p0_register.SetRx_ADDR_P0();
         return true;
     }
 
