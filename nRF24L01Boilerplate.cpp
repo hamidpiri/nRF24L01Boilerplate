@@ -172,6 +172,7 @@ int main()
             // printf(nrfdevice.Mode.TX);
             nrfdevice.SetMode(nrfdevice::RX);
             nrfdevice.EnableDataPipe(5);
+            nrfdevice.SetDataRate(nrfdevice::RF_DR::oneMbps);
             nrfdevice.powerup();
         }
     }
