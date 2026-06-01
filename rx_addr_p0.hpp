@@ -13,6 +13,7 @@ public:
     bool SetRx_ADDR_P0(uint64_t address = 0xE7E7E7E7E7)
     {
         RX_ADDR_P0 = address;
+        return true;
     }
 
 private:
