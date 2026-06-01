@@ -27,6 +27,13 @@ public:
         oneMbps = 0,
         twoMbps = 1
     };
+    enum RF_PWR
+    {
+        _18dbm,
+        _12dbm,
+        _6dbm,
+        _0dbm
+    };
     nrfdevice()
     {
     }
@@ -73,9 +80,9 @@ public:
     // Sets data rate either 1Mbps or 2Mbps
     bool SetPowerAndDataRate(uint8_t power, RF_DR rf_rate)
     {
-        rf_setup::rf_setup_t rfSetup;
-        rfSetup.RF_PWR = power;
-        rfSetup.RF_DR = rf_rate;
+        rf_setup_register.RF_DR = rf_rate;
+        rf_setup_register.RF_PWR = RF_PWR::_0dbm;
+
         return true;
     }
 
