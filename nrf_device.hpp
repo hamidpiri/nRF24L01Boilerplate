@@ -5,6 +5,7 @@
 #include "rx_addr_p0.hpp"
 #include "rx_pw_p0.hpp"
 #include "rf_setup.hpp"
+#include "rf_ch.hpp"
 
 class nrfdevice
 {
@@ -16,6 +17,8 @@ public:
     rx_addr_p0 rx_addr_p0_register;
     rx_pw_p0 rx_pw_p0_register;
     rf_setup rf_setup_register;
+    rf_ch rf_ch_register;
+    setupaw setup_aw_register;
     enum deviceMode
     {
         RX = false,
@@ -84,6 +87,17 @@ public:
         rf_setup_register.RF_PWR = RF_PWR::_0dbm;
 
         return true;
+    }
+    bool SetChannel(int channelNumber)
+    {
+        rf_ch_register.SetRF_CH(32);
+        return true;
+    }
+
+    // Set address width (bytes)
+    bool SetAddressWidth(setupaw::addressWidth width)
+    {
+        setup_aw_register.SetAddressWidth(width);
     }
 
 private:

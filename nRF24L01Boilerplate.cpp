@@ -170,6 +170,10 @@ int main()
             // test
             nrfdevice nrfdevice;
             // printf(nrfdevice.Mode.TX);
+            // 1. Configure RF_CH Default channel 2
+            nrfdevice.SetChannel(2);
+            // 2. Configure address width
+            nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
             nrfdevice.SetMode(nrfdevice::RX);
             nrfdevice.EnableDataPipe(5);
             nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
