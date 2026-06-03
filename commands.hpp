@@ -18,3 +18,30 @@
 #define PIN_SCK 18
 #define PIN_MOSI 3
 #define LED_PIN 25
+
+class commands
+{
+public:
+    static bool WriteTXPayload(uint32_t payload)
+    {
+        static uint8_t buffer_Read[8];
+        uint8_t cmd = W_TX_PAYLOAD | (payload & 0x1F);
+        uint8_t nop = NOP;
+        memset(buffer_Read, 0, sizeof(buffer_Read));
+        csn_low();
+        printf("Reading Register 0x%02X...\n", payload);
+        spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
+        spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
+        csn_high();
+        return buffer_Read[1];
+    }
+
+    static bool TransmitOverRadio()
+    {
+        // Pulse CE High
+    }
+
+private:
+    static inline void csn_low() { gpio_put(PIN_CS, 0); }
+    static inline void csn_high() { gpio_put(PIN_CS, 1); }
+};

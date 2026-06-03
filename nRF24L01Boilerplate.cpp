@@ -193,6 +193,6 @@ int main()
             // 11. Wait
             sleep_ms(500);
             // 12. Load Payload
-                }
+        }
     }
 }

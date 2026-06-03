@@ -7,6 +7,7 @@
 #include "rf_setup.hpp"
 #include "rf_ch.hpp"
 #include "tx_addr.hpp"
+#include "commands.hpp"
 
 class nrfdevice
 {
