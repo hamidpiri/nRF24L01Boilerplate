@@ -190,6 +190,9 @@ int main()
             nrfdevice.SetMode(nrfdevice::TX);
             // 10. Power Up
             nrfdevice.powerup();
-        }
+            // 11. Wait
+            sleep_ms(500);
+            // 12. Load Payload
+                }
     }
 }
