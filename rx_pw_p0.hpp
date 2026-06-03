@@ -13,7 +13,7 @@ public:
     rx_pw_p0() : Register(0x11) {}
     bool SetRX_PW_P0(int pipeWidth)
     {
-        RX_PW_P0 = address;
+        RX_PW_P0 = pipeWidth;
         return true;
     }
 

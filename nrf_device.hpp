@@ -6,6 +6,7 @@
 #include "rx_pw_p0.hpp"
 #include "rf_setup.hpp"
 #include "rf_ch.hpp"
+#include "tx_addr.hpp"
 
 class nrfdevice
 {
@@ -19,6 +20,8 @@ public:
     rf_setup rf_setup_register;
     rf_ch rf_ch_register;
     setupaw setup_aw_register;
+    tx_addr tx_addr_register;
+    enaa enaa_register;
     enum deviceMode
     {
         RX = false,
@@ -59,13 +62,17 @@ public:
             return true;
         }
         config_register.setPRIM_RX(false);
-        config_register.UpdateSelf();
         return false;
     }
 
     bool EnableDataPipe(int pipeNumber)
     {
         dataPipeAddressRegister.setPipeNumber(pipeNumber);
+        return true;
+    }
+    bool EnableAutoAckOfDataPipe(int pipeNumber)
+    {
+        enaa_register.setPipeNumber(pipeNumber);
         return true;
     }
 
@@ -98,6 +105,17 @@ public:
     bool SetAddressWidth(setupaw::addressWidth width)
     {
         setup_aw_register.SetAddressWidth(width);
+    }
+
+    bool SetTransmitAddress(uint64_t address)
+    {
+        tx_addr_register.SetTx_ADDR(address);
+        return true;
+    }
+    bool SetPipe0Width(uint8_t width)
+    {
+        rx_pw_p0_register.SetRX_PW_P0(width);
+        return true;
     }
 
 private:

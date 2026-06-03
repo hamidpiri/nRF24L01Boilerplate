@@ -174,9 +174,21 @@ int main()
             nrfdevice.SetChannel(2);
             // 2. Configure address width
             nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
-            nrfdevice.SetMode(nrfdevice::RX);
-            nrfdevice.EnableDataPipe(5);
+            // 3. Configure Data Rate and Power
             nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
+            // 4. Program TX Address
+            nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
+            // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
+            nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
+            // 6. Enable Data Pipe 0
+            nrfdevice.EnableDataPipe(0);
+            // 7. Enable Auto Ack of Data Pipe 0
+            nrfdevice.EnableAutoAckOfDataPipe(0);
+            // 8. Set Payload Width
+            nrfdevice.SetPipe0Width(32);
+            // 9. Set Mode TX
+            nrfdevice.SetMode(nrfdevice::TX);
+            // 10. Power Up
             nrfdevice.powerup();
         }
     }

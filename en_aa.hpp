@@ -9,6 +9,18 @@ public:
     enaa() : Register(0x01)
     {
     }
+    void UpdateSelf()
+    {
+        printf("en_aa reg value = %d\n", value);
+        WriteRegisterValue(this->value);
+    }
+
+    bool setPipeNumber(int pipeNumber)
+    {
+        this->value = std::bitset<8>(this->value).set(pipeNumber, 1).to_ulong();
+        UpdateSelf();
+        return true;
+    }
 
 private:
 };
