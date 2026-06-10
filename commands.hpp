@@ -17,6 +17,7 @@
 #define PIN_CS 17
 #define PIN_SCK 18
 #define PIN_MOSI 3
+#define PIN_CE 15
 #define LED_PIN 25
 
 class commands
@@ -33,12 +34,30 @@ public:
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
         spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
         csn_high();
-        return buffer_Read[1];
+        return true;
     }
 
     static bool TransmitOverRadio()
     {
+        // 11. Wait
+        sleep_ms(500);
+        gpio_set_dir(PIN_CE, GPIO_OUT);
         // Pulse CE High
+        gpio_put(PIN_CE, 1);
+        sleep_ms(10);
+        gpio_put(PIN_CE, 0);
+        return true;
+    };
+
+    static bool ReceiveOverRadio()
+    {
+        // 11. Wait
+        sleep_ms(500);
+        gpio_set_dir(PIN_CE, GPIO_OUT);
+        // Pulse CE High
+        gpio_put(PIN_CE, 1);
+        gpio_put(LED_PIN, 1);
+        return true;
     }
 
 private:

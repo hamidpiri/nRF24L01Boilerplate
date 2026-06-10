@@ -14,6 +14,7 @@
 #define PIN_CS 17
 #define PIN_SCK 18
 #define PIN_MOSI 3
+#define PIN_CE 15
 #define LED_PIN 25
 
 /***NRF24L01 Commands***/
@@ -190,9 +191,8 @@ int main()
             nrfdevice.SetMode(nrfdevice::TX);
             // 10. Power Up
             nrfdevice.powerup();
-            // 11. Wait
-            sleep_ms(500);
             // 12. Load Payload
+            nrfdevice.WritePayload(0B01);
         }
     }
 }

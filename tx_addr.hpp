@@ -15,6 +15,7 @@ public:
     bool SetTx_ADDR(uint64_t address = 0xE7E7E7E7E7)
     {
         TX_ADDR = address;
+        return true;
         // Todo
         //  WriteRegisterValue()
     }

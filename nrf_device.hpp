@@ -23,6 +23,7 @@ public:
     setupaw setup_aw_register;
     tx_addr tx_addr_register;
     enaa enaa_register;
+    commands command;
     enum deviceMode
     {
         RX = false,
@@ -56,13 +57,14 @@ public:
     // Set Device Mode as Receiver (0) or Sender (1)
     bool SetMode(bool mode)
     {
-        if (mode)
+        if (mode == deviceMode::RX)
         {
             config_register.setPRIM_RX(true);
             config_register.UpdateSelf();
             return true;
         }
         config_register.setPRIM_RX(false);
+        config_register.UpdateSelf();
         return false;
     }
 
@@ -106,6 +108,7 @@ public:
     bool SetAddressWidth(setupaw::addressWidth width)
     {
         setup_aw_register.SetAddressWidth(width);
+        return true;
     }
 
     bool SetTransmitAddress(uint64_t address)
@@ -116,6 +119,13 @@ public:
     bool SetPipe0Width(uint8_t width)
     {
         rx_pw_p0_register.SetRX_PW_P0(width);
+        return true;
+    }
+
+    bool WritePayload(uint32_t payload)
+    {
+        command.WriteTXPayload(payload);
+        command.TransmitOverRadio();
         return true;
     }
 

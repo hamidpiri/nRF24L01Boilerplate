@@ -48,11 +48,11 @@ public:
     }
 
 private:
+    uint8_t value = 0x08;
     // Mask interrupt caused by RX_DR
     // 1: Interrupt not reflected on the IRQ pin
     // 0: Reflect RX_DR as active low interrupt on the
     // IRQ pin
-    uint8_t value = 0x08;
     bool MASK_RX_DR = 0;
 
     //     Mask interrupt caused by TX_DS

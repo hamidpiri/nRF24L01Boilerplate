@@ -11,12 +11,13 @@ class rx_pw_p0 : public Register
 {
 public:
     rx_pw_p0() : Register(0x11) {}
-    bool SetRX_PW_P0(int pipeWidth)
+    bool SetRX_PW_P0(uint8_t pipeWidth)
     {
         RX_PW_P0 = pipeWidth;
+        WriteRegisterValue(RX_PW_P0);
         return true;
     }
 
 private:
-    uint32_t RX_PW_P0;
+    uint8_t RX_PW_P0;
 };

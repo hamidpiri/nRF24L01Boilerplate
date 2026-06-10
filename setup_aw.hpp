@@ -19,6 +19,7 @@ public:
     bool SetAddressWidth(uint8_t addressWidth)
     {
         WriteRegisterValue(addressWidth);
+        return true;
     }
 
 private:
