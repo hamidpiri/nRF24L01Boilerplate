@@ -11,9 +11,11 @@ class rf_ch : public Register
 {
 public:
     rf_ch() : Register(0x05) {}
-    bool SetRF_CH(int frequency)
+    bool SetRF_CH(uint8_t channel)
     {
         // TODO : Set the Frequency
+        this->value = channel;
+        this->WriteRegisterValue(channel);
         return true;
     }
 

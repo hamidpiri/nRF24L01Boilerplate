@@ -95,12 +95,12 @@ public:
     {
         rf_setup_register.RF_DR = rf_rate;
         rf_setup_register.RF_PWR = RF_PWR::_0dbm;
-
+        rf_setup_register.SetRF_Setup();
         return true;
     }
     bool SetChannel(int channelNumber)
     {
-        rf_ch_register.SetRF_CH(32);
+        rf_ch_register.SetRF_CH(channelNumber);
         return true;
     }
 

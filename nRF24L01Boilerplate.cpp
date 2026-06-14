@@ -61,6 +61,95 @@
 #define FIFO_STATUS (1 << 5)
 /***Register Addresses***/
 
+void readFromUser()
+{
+
+    printf("Write 0 for read or 1 for write");
+    char selection = getchar();
+    if (selection == '0')
+    {
+
+        printf("Enter register address (hex): ");
+        char input[3];
+
+        int i = 0;
+        int ch;
+        // Read characters until newline or buffer full
+        while (i < sizeof(input) - 1)
+        {
+            ch = getchar();
+            if (ch == '\n' || ch == '\r')
+            {
+                break;
+            }
+            input[i++] = (char)ch;
+        }
+        input[i] = '\0'; // Null-terminate string
+
+        // Manual hex string to uint8_t conversion (no strtol)
+        uint8_t regAddr = 0;
+        for (int j = 0; j < i; j++)
+        {
+            regAddr <<= 4;
+            if (input[j] >= '0' && input[j] <= '9')
+                regAddr |= (input[j] - '0');
+            else if (input[j] >= 'A' && input[j] <= 'F')
+                regAddr |= (input[j] - 'A' + 10);
+            else if (input[j] >= 'a' && input[j] <= 'f')
+                regAddr |= (input[j] - 'a' + 10);
+            else
+                break; // Invalid character
+        }
+
+        printf("You entered: %s\n", input);
+        printf("Hex value: 0x%02X\n", regAddr);
+        printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
+
+        Register reg(regAddr);
+        uint8_t regValue = reg.ReadRegisterValue();
+        uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
+        printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
+        printf("Register 0x%02X Binary value: 0b%s\n", regAddr, std::bitset<8>(regValue).to_string().c_str());
+    }
+    else if (selection == '1')
+    {
+
+        printf("Enter register address (hex): ");
+        char input[3];
+
+        int i = 0;
+        int ch;
+        // Read characters until newline or buffer full
+        while (i < sizeof(input) - 1)
+        {
+            ch = getchar();
+            if (ch == '\n' || ch == '\r')
+            {
+                break;
+            }
+            input[i++] = (char)ch;
+        }
+        input[i] = '\0'; // Null-terminate string
+
+        // Manual hex string to uint8_t conversion (no strtol)
+        uint8_t regAddr = 0;
+        for (int j = 0; j < i; j++)
+        {
+            regAddr <<= 4;
+            if (input[j] >= '0' && input[j] <= '9')
+                regAddr |= (input[j] - '0');
+            else if (input[j] >= 'A' && input[j] <= 'F')
+                regAddr |= (input[j] - 'A' + 10);
+            else if (input[j] >= 'a' && input[j] <= 'f')
+                regAddr |= (input[j] - 'a' + 10);
+            else
+                break; // Invalid character
+        }
+
+        printf("You entered: 0x%02X\n", regAddr);
+    }
+}
+
 int main()
 {
     stdio_init_all();
@@ -81,118 +170,47 @@ int main()
     gpio_put(PIN_CS, 1);
     // For more examples of SPI use see https : // github.com/raspberrypi/pico-examples/tree/master/spi
 
-    while (true)
+    // test
+    nrfdevice nrfdevice;
+    // printf(nrfdevice.Mode.TX);
+    // 1. Configure RF_CH Default channel 2
+    nrfdevice.SetChannel(2);
+    // 2. Configure address width
+    nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
+    // 3. Configure Data Rate and Power
+    nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
+    // 4. Program TX Address
+    nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
+    // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
+    nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
+    // 6. Enable Data Pipe 0
+    nrfdevice.EnableDataPipe(0);
+    // 7. Enable Auto Ack of Data Pipe 0
+    nrfdevice.EnableAutoAckOfDataPipe(0);
+    // 8. Set Payload Width
+    nrfdevice.SetPipe0Width(32);
+    // 9. Set Mode TX
+    nrfdevice.SetMode(nrfdevice::TX);
+    // 10. Power Up
+    nrfdevice.powerup();
+    // 12. Load Payload
+    nrfdevice.WritePayload(0B01);
+    // 13. Poll Status
+    while (1)
     {
-
-        printf("Write 0 for read or 1 for write");
-        char selection = getchar();
-        if (selection == '0')
+        /* code */
+        Register status_reg(0x07);
+        sleep_ms(5000);
+        uint8_t status_reg_value = status_reg.ReadRegisterValue();
+        gpio_put(LED_PIN, 0);
+        sleep_ms(5000);
+        nrfdevice.command.TransmitOverRadio();
+        while (!status_reg.ReadBit(5))
         {
-
-            printf("Enter register address (hex): ");
-            char input[3];
-
-            int i = 0;
-            int ch;
-            // Read characters until newline or buffer full
-            while (i < sizeof(input) - 1)
-            {
-                ch = getchar();
-                if (ch == '\n' || ch == '\r')
-                {
-                    break;
-                }
-                input[i++] = (char)ch;
-            }
-            input[i] = '\0'; // Null-terminate string
-
-            // Manual hex string to uint8_t conversion (no strtol)
-            uint8_t regAddr = 0;
-            for (int j = 0; j < i; j++)
-            {
-                regAddr <<= 4;
-                if (input[j] >= '0' && input[j] <= '9')
-                    regAddr |= (input[j] - '0');
-                else if (input[j] >= 'A' && input[j] <= 'F')
-                    regAddr |= (input[j] - 'A' + 10);
-                else if (input[j] >= 'a' && input[j] <= 'f')
-                    regAddr |= (input[j] - 'a' + 10);
-                else
-                    break; // Invalid character
-            }
-
-            printf("You entered: %s\n", input);
-            printf("Hex value: 0x%02X\n", regAddr);
-            printf("Binary value: 0b%s\n", std::bitset<8>(regAddr).to_string().c_str());
-
-            Register reg(regAddr);
-            uint8_t regValue = reg.ReadRegisterValue();
-            uint8_t regValueBinary = std::bitset<8>(regValue).to_ulong();
-            printf("Register 0x%02X Value: 0x%02X\n", regAddr, regValue);
-            printf("Register 0x%02X Binary value: 0b%s\n", regAddr, std::bitset<8>(regValue).to_string().c_str());
         }
-        else if (selection == '1')
-        {
-
-            printf("Enter register address (hex): ");
-            char input[3];
-
-            int i = 0;
-            int ch;
-            // Read characters until newline or buffer full
-            while (i < sizeof(input) - 1)
-            {
-                ch = getchar();
-                if (ch == '\n' || ch == '\r')
-                {
-                    break;
-                }
-                input[i++] = (char)ch;
-            }
-            input[i] = '\0'; // Null-terminate string
-
-            // Manual hex string to uint8_t conversion (no strtol)
-            uint8_t regAddr = 0;
-            for (int j = 0; j < i; j++)
-            {
-                regAddr <<= 4;
-                if (input[j] >= '0' && input[j] <= '9')
-                    regAddr |= (input[j] - '0');
-                else if (input[j] >= 'A' && input[j] <= 'F')
-                    regAddr |= (input[j] - 'A' + 10);
-                else if (input[j] >= 'a' && input[j] <= 'f')
-                    regAddr |= (input[j] - 'a' + 10);
-                else
-                    break; // Invalid character
-            }
-
-            printf("You entered: 0x%02X\n", regAddr);
-
-            // test
-            nrfdevice nrfdevice;
-            // printf(nrfdevice.Mode.TX);
-            // 1. Configure RF_CH Default channel 2
-            nrfdevice.SetChannel(2);
-            // 2. Configure address width
-            nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
-            // 3. Configure Data Rate and Power
-            nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
-            // 4. Program TX Address
-            nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
-            // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
-            nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
-            // 6. Enable Data Pipe 0
-            nrfdevice.EnableDataPipe(0);
-            // 7. Enable Auto Ack of Data Pipe 0
-            nrfdevice.EnableAutoAckOfDataPipe(0);
-            // 8. Set Payload Width
-            nrfdevice.SetPipe0Width(32);
-            // 9. Set Mode TX
-            nrfdevice.SetMode(nrfdevice::TX);
-            // 10. Power Up
-            nrfdevice.powerup();
-            // 12. Load Payload
-            nrfdevice.WritePayload(0B01);
-        }
+        printf("Data Transmitted Successfully!");
+        gpio_put(LED_PIN, 1);
+        status_reg.WriteBit(5, 1);
+        readFromUser();
     }
 }

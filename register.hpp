@@ -35,7 +35,18 @@ public:
 
     bool ReadBit(uint8_t bit)
     {
+        this->ReadRegisterValue();
         return (value >> bit) & 1u;
+    };
+    bool WriteBit(uint8_t bit, uint8_t bitValue)
+    {
+        ReadRegisterValue();
+        if (bitValue)
+            this->value |= (1 << bit);
+        else
+            this->value &= ~(1 << bit);
+        WriteRegisterValue(this->value);
+        return true;
     };
 
     static inline void csn_low() { gpio_put(PIN_CS, 0); }
@@ -52,6 +63,7 @@ public:
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
         spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
         csn_high();
+        this->value = buffer_Read[1];
         return buffer_Read[1];
     }
 
