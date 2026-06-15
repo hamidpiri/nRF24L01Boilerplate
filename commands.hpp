@@ -23,16 +23,25 @@
 class commands
 {
 public:
-    static bool WriteTXPayload(uint32_t payload)
+    static bool ClearTXPayload()
+    {
+        uint8_t cmd = FLUSH_TX;
+
+        csn_low();
+        spi_write_blocking(SPI_PORT, &cmd, 1);
+        csn_high();
+    }
+    static bool WriteTXPayload(uint8_t payload)
     {
         static uint8_t buffer_Read[8];
-        uint8_t cmd = W_TX_PAYLOAD | (payload & 0x1F);
+        uint8_t cmd = W_TX_PAYLOAD;
         uint8_t nop = NOP;
+        uint8_t _payload = payload;
         memset(buffer_Read, 0, sizeof(buffer_Read));
         csn_low();
-        printf("Reading Register 0x%02X...\n", payload);
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
-        spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
+        printf("Status after writing payload: %d \n", buffer_Read[0]);
+        spi_write_read_blocking(SPI_PORT, &_payload, &buffer_Read[2], 1);
         csn_high();
         return true;
     }
@@ -40,6 +49,7 @@ public:
     static bool TransmitOverRadio()
     {
         // 11. Wait
+        gpio_init(PIN_CE);
         sleep_ms(500);
         gpio_set_dir(PIN_CE, GPIO_OUT);
         // Pulse CE High
@@ -52,6 +62,7 @@ public:
     static bool ReceiveOverRadio()
     {
         // 11. Wait
+        gpio_init(PIN_CE);
         sleep_ms(500);
         gpio_set_dir(PIN_CE, GPIO_OUT);
         // Pulse CE High

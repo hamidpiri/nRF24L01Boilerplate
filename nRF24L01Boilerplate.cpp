@@ -188,7 +188,7 @@ int main()
     // 7. Enable Auto Ack of Data Pipe 0
     nrfdevice.EnableAutoAckOfDataPipe(0);
     // 8. Set Payload Width
-    nrfdevice.SetPipe0Width(32);
+    nrfdevice.SetPipe0Width(1);
     // 9. Set Mode TX
     nrfdevice.SetMode(nrfdevice::TX);
     // 10. Power Up
@@ -199,18 +199,28 @@ int main()
     while (1)
     {
         /* code */
+        readFromUser();
+        nrfdevice.command.ClearTXPayload();
+        nrfdevice.WritePayload(0B01);
+
         Register status_reg(0x07);
         sleep_ms(5000);
         uint8_t status_reg_value = status_reg.ReadRegisterValue();
         gpio_put(LED_PIN, 0);
         sleep_ms(5000);
+        Register FIFO_REG(0x17);
+        printf("FIFO_STATUS before Transmitoverradio: %d \n", FIFO_REG.ReadRegisterValue());
         nrfdevice.command.TransmitOverRadio();
-        while (!status_reg.ReadBit(5))
-        {
-        }
+        printf("FIFO_STATUS after Transmitoverradio: %d \n", FIFO_REG.ReadRegisterValue());
+        // printf("%d", status_reg_value);
+
+        // getchar();
+
+        // while (!status_reg.ReadBit(5))
+        // {
+        // }
         printf("Data Transmitted Successfully!");
         gpio_put(LED_PIN, 1);
-        status_reg.WriteBit(5, 1);
-        readFromUser();
+        // status_reg.WriteBit(5, 1);
     }
 }
