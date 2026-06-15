@@ -24,6 +24,7 @@ public:
     tx_addr tx_addr_register;
     enaa enaa_register;
     commands command;
+
     enum deviceMode
     {
         RX = false,
@@ -44,6 +45,8 @@ public:
     };
     nrfdevice()
     {
+        gpio_init(PIN_CE);
+        gpio_set_dir(PIN_CE, GPIO_OUT);
     }
 
     bool powerup()

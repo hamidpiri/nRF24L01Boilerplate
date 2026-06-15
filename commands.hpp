@@ -26,10 +26,11 @@ public:
     static bool ClearTXPayload()
     {
         uint8_t cmd = FLUSH_TX;
-
+        static uint8_t buffer_read[2];
         csn_low();
-        spi_write_blocking(SPI_PORT, &cmd, 1);
+        spi_write_read_blocking(SPI_PORT, &cmd, buffer_read, 1);
         csn_high();
+        return true;
     }
     static bool WriteTXPayload(uint8_t payload)
     {
