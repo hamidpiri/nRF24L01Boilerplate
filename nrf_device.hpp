@@ -46,6 +46,7 @@ public:
     nrfdevice()
     {
         gpio_init(PIN_CE);
+        gpio_set_function(PIN_CE, GPIO_FUNC_SIO);
         gpio_set_dir(PIN_CE, GPIO_OUT);
     }
 

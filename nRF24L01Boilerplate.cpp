@@ -198,29 +198,42 @@ int main()
     // 13. Poll Status
     while (1)
     {
-        /* code */
-        readFromUser();
+        sleep_ms(7000);
         nrfdevice.command.ClearTXPayload();
-        nrfdevice.WritePayload(0B01);
 
-        Register status_reg(0x07);
-        sleep_ms(5000);
-        uint8_t status_reg_value = status_reg.ReadRegisterValue();
-        gpio_put(LED_PIN, 0);
-        sleep_ms(5000);
-        Register FIFO_REG(0x17);
-        printf("FIFO_STATUS before Transmitoverradio: %d \n", FIFO_REG.ReadRegisterValue());
+        Register status(0x07);
+        Register fifo(0x17);
+        Register observe(0x08);
+
+        printf("\n=== BEFORE WRITE ===\n");
+        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
+        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
+        printf("OBSERVE_TX   = 0x%02X\n", observe.ReadRegisterValue());
+
+        nrfdevice.command.WriteTXPayload(0x55);
+
+        printf("\n=== AFTER WRITE ===\n");
+        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
+        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
+
+        uint8_t fifoval = fifo.ReadRegisterValue();
+
+        printf("FIFO=0x%02X\n", fifoval);
+        printf("TX_REUSE=%d\n", (fifoval >> 6) & 1);
+        printf("TX_FULL=%d\n", (fifoval >> 5) & 1);
+        printf("TX_EMPTY=%d\n", (fifoval >> 4) & 1);
+        printf("RX_EMPTY=%d\n", (fifoval >> 0) & 1);
+
+        sleep_ms(1000);
+
         nrfdevice.command.TransmitOverRadio();
-        printf("FIFO_STATUS after Transmitoverradio: %d \n", FIFO_REG.ReadRegisterValue());
-        // printf("%d", status_reg_value);
 
-        // getchar();
+        sleep_ms(10);
 
-        // while (!status_reg.ReadBit(5))
-        // {
-        // }
-        printf("Data Transmitted Successfully!");
-        gpio_put(LED_PIN, 1);
-        // status_reg.WriteBit(5, 1);
+        printf("\n=== AFTER CE PULSE ===\n");
+        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
+        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
+        printf("OBSERVE_TX   = 0x%02X\n", observe.ReadRegisterValue());
+        getchar();
     }
 }
