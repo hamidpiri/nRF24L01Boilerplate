@@ -176,13 +176,13 @@ int main()
     // 1. Configure RF_CH Default channel 2
     nrfdevice.SetChannel(2);
     // 2. Configure address width
-    nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
+    // nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
     // 3. Configure Data Rate and Power
     nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
     // 4. Program TX Address
-    nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
-    // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
-    nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
+    // nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
+    // // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
+    // nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
     // 6. Enable Data Pipe 0
     nrfdevice.EnableDataPipe(0);
     // 7. Enable Auto Ack of Data Pipe 0
@@ -226,6 +226,14 @@ int main()
 
         sleep_ms(1000);
 
+        gpio_set_dir(PIN_CE, GPIO_OUT);
+        // Pulse CE High
+        gpio_put(PIN_CE, 1);
+        printf("STATUS while CE high = 0x%02X\n",
+               status.ReadRegisterValue());
+
+        printf("FIFO while CE high = 0x%02X\n",
+               fifo.ReadRegisterValue());
         nrfdevice.command.TransmitOverRadio();
 
         sleep_ms(10);
@@ -234,6 +242,6 @@ int main()
         printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
         printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
         printf("OBSERVE_TX   = 0x%02X\n", observe.ReadRegisterValue());
-        getchar();
+        readFromUser();
     }
 }
