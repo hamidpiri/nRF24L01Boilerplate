@@ -194,54 +194,28 @@ int main()
     // 10. Power Up
     nrfdevice.powerup();
     // 12. Load Payload
-    nrfdevice.WritePayload(0B01);
+    // nrfdevice.WritePayload(0B01);
     // 13. Poll Status
     while (1)
     {
         sleep_ms(7000);
         nrfdevice.command.ClearTXPayload();
-
-        Register status(0x07);
-        Register fifo(0x17);
-        Register observe(0x08);
-
-        printf("\n=== BEFORE WRITE ===\n");
-        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
-        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
-        printf("OBSERVE_TX   = 0x%02X\n", observe.ReadRegisterValue());
-
-        nrfdevice.command.WriteTXPayload(0x55);
-
-        printf("\n=== AFTER WRITE ===\n");
-        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
-        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
-
-        uint8_t fifoval = fifo.ReadRegisterValue();
-
-        printf("FIFO=0x%02X\n", fifoval);
-        printf("TX_REUSE=%d\n", (fifoval >> 6) & 1);
-        printf("TX_FULL=%d\n", (fifoval >> 5) & 1);
-        printf("TX_EMPTY=%d\n", (fifoval >> 4) & 1);
-        printf("RX_EMPTY=%d\n", (fifoval >> 0) & 1);
-
-        sleep_ms(1000);
-
-        gpio_set_dir(PIN_CE, GPIO_OUT);
-        // Pulse CE High
-        gpio_put(PIN_CE, 1);
-        printf("STATUS while CE high = 0x%02X\n",
-               status.ReadRegisterValue());
-
-        printf("FIFO while CE high = 0x%02X\n",
-               fifo.ReadRegisterValue());
+        nrfdevice.WritePayload(10);
         nrfdevice.command.TransmitOverRadio();
-
-        sleep_ms(10);
-
-        printf("\n=== AFTER CE PULSE ===\n");
-        printf("STATUS       = 0x%02X\n", status.ReadRegisterValue());
-        printf("FIFO_STATUS  = 0x%02X\n", fifo.ReadRegisterValue());
-        printf("OBSERVE_TX   = 0x%02X\n", observe.ReadRegisterValue());
+        Register status_reg(0x07);
+        sleep_ms(5000);
+        uint8_t status_reg_value = status_reg.ReadRegisterValue();
+        gpio_put(LED_PIN, 0);
+        sleep_ms(5000);
+        Register fifo_status_reg(0x17);
+        while (!status_reg.ReadBit(5))
+        {
+            uint8_t fifo_reg_value = fifo_status_reg.ReadRegisterValue();
+            printf("Status: 0x%02X\n", status_reg_value);
+            printf("FIFO: 0x%02X\n", fifo_reg_value);
+            sleep_ms(3000);
+            printf("Waiting for data to be sent!\n");
+        }
         readFromUser();
     }
 }

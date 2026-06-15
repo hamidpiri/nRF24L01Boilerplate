@@ -126,7 +126,7 @@ public:
         return true;
     }
 
-    bool WritePayload(uint32_t payload)
+    bool WritePayload(uint8_t payload)
     {
         command.WriteTXPayload(payload);
         command.TransmitOverRadio();
