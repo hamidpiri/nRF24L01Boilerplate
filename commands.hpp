@@ -47,6 +47,20 @@ public:
         return true;
     }
 
+    // Before this, check RX_DR is 1, (Data Ready RX FIFO Interrupt , Status 0x07 bit 5)
+    static uint8_t ReadRXPayload()
+    {
+        static uint8_t buffer_read[4];
+        uint8_t cmd = R_RX_PAYLOAD;
+        uint8_t nop = NOP;
+        memset(buffer_read, 0, sizeof(buffer_read));
+        csn_low();
+        spi_write_read_blocking(SPI_PORT, &cmd, buffer_read, 1);
+        spi_write_read_blocking(SPI_PORT, &nop, &buffer_read[1], 1);
+        csn_high();
+        return buffer_read[1];
+    }
+
     static bool TransmitOverRadio()
     {
         // 11. Wait

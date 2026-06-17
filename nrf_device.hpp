@@ -8,6 +8,7 @@
 #include "rf_ch.hpp"
 #include "tx_addr.hpp"
 #include "commands.hpp"
+#include "status.hpp"
 
 class nrfdevice
 {
@@ -15,6 +16,7 @@ public:
     // enaa enaa_register;
     // setupaw setupaw;
     config config_register;
+    Status status_register;
     en_rxaddr dataPipeAddressRegister;
     rx_addr_p0 rx_addr_p0_register;
     rx_pw_p0 rx_pw_p0_register;
@@ -130,6 +132,27 @@ public:
     {
         command.WriteTXPayload(payload);
         command.TransmitOverRadio();
+        return true;
+    }
+    bool IsDataReceived(uint8_t pipeNo)
+    {
+        return status_register.ReadBit(6);
+    }
+    // Check IsDataReceived() first!
+    uint8_t ReadRxPayload()
+    {
+        return command.ReadRXPayload();
+    }
+    // Clears RX_DR, TX_DS, MAX_RT interrupt flags by setting them to 1
+    bool ClearInterrupts()
+    {
+        // RX_DR
+        status_register.WriteRegisterValue(0x40);
+        // TX_DS
+        status_register.WriteRegisterValue(0x20);
+        // MAX_RT
+        status_register.WriteRegisterValue(0x10);
+
         return true;
     }
 

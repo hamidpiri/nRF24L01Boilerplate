@@ -59,7 +59,7 @@ public:
         uint8_t nop = NOP;
         memset(buffer_Read, 0, sizeof(buffer_Read));
         csn_low();
-        printf("Reading Register 0x%02X...\n", address);
+        // printf("Reading Register 0x%02X...\n", address);
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
         spi_write_read_blocking(SPI_PORT, &nop, &buffer_Read[1], 1);
         csn_high();

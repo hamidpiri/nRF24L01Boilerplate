@@ -200,7 +200,7 @@ int main()
     {
         sleep_ms(7000);
         nrfdevice.command.ClearTXPayload();
-        nrfdevice.WritePayload(10);
+        nrfdevice.WritePayload(0x01);
         nrfdevice.command.TransmitOverRadio();
         Register status_reg(0x07);
         sleep_ms(5000);
@@ -216,6 +216,6 @@ int main()
             sleep_ms(3000);
             printf("Waiting for data to be sent!\n");
         }
-        readFromUser();
+        // readFromUser();
     }
 }
