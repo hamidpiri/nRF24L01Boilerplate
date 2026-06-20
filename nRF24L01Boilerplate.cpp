@@ -196,11 +196,12 @@ int main()
     // 12. Load Payload
     // nrfdevice.WritePayload(0B01);
     // 13. Poll Status
+    uint8_t payload = 0x00;
     while (1)
     {
         sleep_ms(7000);
         nrfdevice.command.ClearTXPayload();
-        nrfdevice.WritePayload(0x01);
+        nrfdevice.WritePayload(payload++);
         nrfdevice.command.TransmitOverRadio();
         Register status_reg(0x07);
         sleep_ms(5000);
