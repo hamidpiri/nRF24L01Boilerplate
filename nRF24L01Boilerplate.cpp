@@ -152,71 +152,70 @@ void readFromUser()
 
 int main()
 {
-    stdio_init_all();
-
-    // SPI initialisation. This example will use SPI at 1MHz.
-    spi_init(SPI_PORT, 1000 * 1000);
-    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
-    gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
-
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-    gpio_put(LED_PIN, 1);
-
-    // Chip select is active-low, so we'll initialise it to a driven-high state
-    gpio_set_dir(PIN_CS, GPIO_OUT);
-    gpio_put(PIN_CS, 1);
-    // For more examples of SPI use see https : // github.com/raspberrypi/pico-examples/tree/master/spi
-
-    // test
-    nrfdevice nrfdevice;
-    // printf(nrfdevice.Mode.TX);
-    // 1. Configure RF_CH Default channel 2
-    nrfdevice.SetChannel(2);
-    // 2. Configure address width
-    // nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
-    // 3. Configure Data Rate and Power
-    nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
-    // 4. Program TX Address
-    // nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
-    // // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
-    // nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
-    // 6. Enable Data Pipe 0
-    nrfdevice.EnableDataPipe(0);
-    // 7. Enable Auto Ack of Data Pipe 0
-    nrfdevice.EnableAutoAckOfDataPipe(0);
-    // 8. Set Payload Width
-    nrfdevice.SetPipe0Width(1);
-    // 9. Set Mode TX
-    nrfdevice.SetMode(nrfdevice::TX);
-    // 10. Power Up
-    nrfdevice.powerup();
-    // 12. Load Payload
-    // nrfdevice.WritePayload(0B01);
-    // 13. Poll Status
     uint8_t payload = 0x00;
+
+    stdio_init_all();
     while (1)
     {
-        sleep_ms(7000);
+
+        // SPI initialisation. This example will use SPI at 1MHz.
+        spi_init(SPI_PORT, 1000 * 1000);
+        gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
+        gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
+
+        gpio_init(LED_PIN);
+        gpio_set_dir(LED_PIN, GPIO_OUT);
+        gpio_put(LED_PIN, 1);
+
+        // Chip select is active-low, so we'll initialise it to a driven-high state
+        gpio_set_dir(PIN_CS, GPIO_OUT);
+        gpio_put(PIN_CS, 1);
+        // For more examples of SPI use see https : // github.com/raspberrypi/pico-examples/tree/master/spi
+
+        // test
+        nrfdevice nrfdevice;
+        // printf(nrfdevice.Mode.TX);
+        // 1. Configure RF_CH Default channel 2
+        nrfdevice.SetChannel(2);
+        // 2. Configure address width
+        // nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
+        // 3. Configure Data Rate and Power
+        nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
+        // 4. Program TX Address
+        // nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
+        // // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
+        // nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
+        // 6. Enable Data Pipe 0
+        nrfdevice.EnableDataPipe(0);
+        // 7. Enable Auto Ack of Data Pipe 0
+        nrfdevice.EnableAutoAckOfDataPipe(0);
+        // 8. Set Payload Width
+        nrfdevice.SetPipe0Width(1);
+        // 9. Set Mode TX
+        nrfdevice.SetMode(nrfdevice::TX);
+        // 10. Power Up
+        nrfdevice.powerup();
+        // 12. Load Payload
+        // nrfdevice.WritePayload(0B01);
+        // 13. Poll Status
+
+        sleep_ms(1200);
         nrfdevice.command.ClearTXPayload();
-        nrfdevice.WritePayload(payload++);
+        nrfdevice.WritePayload(++payload);
         nrfdevice.command.TransmitOverRadio();
-        Register status_reg(0x07);
-        sleep_ms(5000);
-        uint8_t status_reg_value = status_reg.ReadRegisterValue();
-        gpio_put(LED_PIN, 0);
-        sleep_ms(5000);
-        Register fifo_status_reg(0x17);
-        while (!status_reg.ReadBit(5))
-        {
-            uint8_t fifo_reg_value = fifo_status_reg.ReadRegisterValue();
-            printf("Status: 0x%02X\n", status_reg_value);
-            printf("FIFO: 0x%02X\n", fifo_reg_value);
-            sleep_ms(3000);
-            printf("Waiting for data to be sent!\n");
-        }
+
+        // uint8_t status_reg_value = status_reg.ReadRegisterValue();
+
+        // while (!status_reg.ReadBit(5))
+        // {
+        //     uint8_t fifo_reg_value = fifo_status_reg.ReadRegisterValue();
+        //     printf("Status: 0x%02X\n", status_reg_value);
+        //     printf("FIFO: 0x%02X\n", fifo_reg_value);
+        //     sleep_ms(2000);
+        //     printf("Waiting for data to be sent!\n");
+        // }
         // readFromUser();
     }
 }

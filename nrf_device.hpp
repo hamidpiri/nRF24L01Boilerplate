@@ -131,7 +131,6 @@ public:
     bool WritePayload(uint8_t payload)
     {
         command.WriteTXPayload(payload);
-        command.TransmitOverRadio();
         return true;
     }
     bool IsDataReceived(uint8_t pipeNo)

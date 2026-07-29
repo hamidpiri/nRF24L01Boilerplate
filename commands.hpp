@@ -40,9 +40,8 @@ public:
         uint8_t _payload = payload;
         memset(buffer_Read, 0, sizeof(buffer_Read));
         csn_low();
-        spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
-        printf("Status after writing payload: %d \n", buffer_Read[0]);
-        spi_write_read_blocking(SPI_PORT, &_payload, &buffer_Read[2], 1);
+        spi_write_blocking(SPI_PORT, &cmd, 1);
+        spi_write_blocking(SPI_PORT, &payload, 1);
         csn_high();
         return true;
     }
@@ -64,9 +63,7 @@ public:
     static bool TransmitOverRadio()
     {
         // 11. Wait
-        gpio_init(PIN_CE);
-        sleep_ms(500);
-        gpio_set_dir(PIN_CE, GPIO_OUT);
+
         // Pulse CE High
         gpio_put(PIN_CE, 1);
         sleep_ms(10);
