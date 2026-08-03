@@ -37,30 +37,5 @@ set(PICO_CXX_ENABLE_RTTI 1)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
-
-add_executable(nRF24L01Boilerplate nRF24L01Boilerplate.cpp )
-
-pico_set_program_name(nRF24L01Boilerplate "nRF24L01Boilerplate")
-pico_set_program_version(nRF24L01Boilerplate "0.1")
-
-# Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(nRF24L01Boilerplate 0)
-pico_enable_stdio_usb(nRF24L01Boilerplate 1)
-
-# Add the standard library to the build
-target_link_libraries(nRF24L01Boilerplate
-        pico_stdlib)
-
-# Add the standard include files to the build
-target_include_directories(nRF24L01Boilerplate PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
-# Add any user requested libraries
-target_link_libraries(nRF24L01Boilerplate 
-        hardware_spi
-        )
-
-pico_add_extra_outputs(nRF24L01Boilerplate)
-
+add_subdirectory(lib/nrf24)
+add_subdirectory(examples/transmitter)
