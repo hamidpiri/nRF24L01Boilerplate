@@ -72,8 +72,8 @@ public:
         uint8_t nop = NOP;
         static uint8_t buffer_Read[8];
         uint8_t cmd = W_REGISTER | (address & 0x1F); // 0B00100000; 0x20
-        printf("CMD is: 0x%02X \n", cmd);
-        printf("Writing to Register 0x%02X Value: 0x%02X...\n", address, value);
+        // printf("CMD is: 0x%02X \n", cmd);
+        // printf("Writing to Register 0x%02X Value: 0x%02X...\n", address, value);
 
         csn_low();
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
@@ -81,7 +81,7 @@ public:
 
         csn_high();
 
-        printf("Writing Success!\n");
+        // printf("Writing Success!\n");
         return 0;
     }
 };

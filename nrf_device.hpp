@@ -142,6 +142,15 @@ public:
     {
         return command.ReadRXPayload();
     }
+
+    bool IsDataTransmitted()
+    {
+        return this->status_register.ReadBit(5);
+    }
+    bool IsTransmitFailed()
+    {
+        return this->status_register.ReadBit(4);
+    }
     // Clears RX_DR, TX_DS, MAX_RT interrupt flags by setting them to 1
     bool ClearInterrupts()
     {
