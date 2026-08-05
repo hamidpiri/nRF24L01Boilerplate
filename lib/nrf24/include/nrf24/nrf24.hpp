@@ -54,7 +54,7 @@ namespace nrf24
         bool start_listening();
         bool stop_listening();
 
-        bool transmit(const uint8_t data, size_t length);
+        bool transmit(const uint8_t *data, size_t length);
         bool data_available();
         bool receive(uint8_t *data, size_t capacity,
                      size_t &received);
@@ -73,7 +73,8 @@ namespace nrf24
 
         uint8_t read_register(uint8_t address);
         void write_register(uint8_t address, uint8_t value);
-        void write_register(uint8_t address, uint8_t value);
+        void write_register(std::uint8_t address, const std::uint8_t *data,
+                            std::size_t length);
     };
 
 }
