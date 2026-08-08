@@ -45,11 +45,38 @@ public:
         _6dbm,
         _0dbm
     };
-    nrfdevice()
+    nrfdevice(
+        spi_inst_t *spi,
+        uint8_t sck_pin_number,
+        uint8_t mosi_pin_number,
+        uint8_t miso_pin_number,
+        uint8_t ce_pin_number,
+        uint8_t csn_pin_number)
     {
-        gpio_init(PIN_CE);
-        gpio_set_function(PIN_CE, GPIO_FUNC_SIO);
-        gpio_set_dir(PIN_CE, GPIO_OUT);
+        this->spi_ = spi;
+        this->sck_pin_ = sck_pin_number;
+        this->mosi_pin_ = mosi_pin_number;
+        this->miso_pin_ = miso_pin_number;
+        this->ce_pin_ = ce_pin_number;
+        this->csn_pin_ = csn_pin_number;
+
+        gpio_init(ce_pin_);
+        gpio_set_function(ce_pin_, GPIO_FUNC_SIO);
+        gpio_set_dir(ce_pin_, GPIO_OUT);
+
+        // SPI initialisation. This example will use SPI at 1MHz.
+        gpio_set_function(miso_pin_, GPIO_FUNC_SPI);
+        gpio_set_function(csn_pin_, GPIO_FUNC_SIO);
+        gpio_set_function(sck_pin_, GPIO_FUNC_SPI);
+        gpio_set_function(mosi_pin_, GPIO_FUNC_SPI);
+        spi_init(this->spi_, 1000 * 1000);
+        // Chip select is active-low, so we'll initialise it to a driven-high state
+        gpio_set_dir(csn_pin_, GPIO_OUT);
+        gpio_put(csn_pin_, 1);
+
+        gpio_init(LED_PIN);
+        gpio_set_dir(LED_PIN, GPIO_OUT);
+        gpio_put(LED_PIN, 1);
     }
 
     bool powerup()
@@ -165,4 +192,11 @@ public:
     }
 
 private:
+    spi_inst_t *spi_;
+
+    uint8_t sck_pin_;
+    uint8_t mosi_pin_;
+    uint8_t miso_pin_;
+    uint8_t ce_pin_;
+    uint8_t csn_pin_;
 };

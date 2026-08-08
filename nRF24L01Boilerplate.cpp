@@ -152,25 +152,12 @@ void readFromUser()
 
 int main()
 {
-    // SPI initialisation. This example will use SPI at 1MHz.
-    spi_init(SPI_PORT, 1000 * 1000);
-    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
-    gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
 
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-    gpio_put(LED_PIN, 1);
-
-    // Chip select is active-low, so we'll initialise it to a driven-high state
-    gpio_set_dir(PIN_CS, GPIO_OUT);
-    gpio_put(PIN_CS, 1);
-    // For more examples of SPI use see https : // github.com/raspberrypi/pico-examples/tree/master/spi
-
-    // test
-    nrfdevice nrfdevice;
-    // printf(nrfdevice.Mode.TX);
+    nrfdevice nrfdevice(spi0,
+                        PIN_SCK,
+                        PIN_MOSI,
+                        PIN_MISO, PIN_CE,
+                        PIN_CS);
     // 1. Configure RF_CH Default channel 2
     nrfdevice.SetChannel(2);
     // 2. Configure address width
@@ -214,6 +201,7 @@ int main()
         {
             if (nrfdevice.IsDataTransmitted())
             {
+                gpio_put(LED_PIN, 1);
                 printf("Success\n");
                 nrfdevice.ClearInterrupts();
                 break;
@@ -225,6 +213,7 @@ int main()
                 printf("Failed and retrying\n");
                 nrfdevice.ClearInterrupts();
                 nrfdevice.command.TransmitOverRadio();
+                gpio_put(LED_PIN, 0);
                 sleep_ms(1000);
             }
         }
