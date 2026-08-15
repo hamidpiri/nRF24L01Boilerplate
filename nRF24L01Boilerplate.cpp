@@ -156,7 +156,8 @@ int main()
     nrfdevice nrfdevice(spi0,
                         PIN_SCK,
                         PIN_MOSI,
-                        PIN_MISO, PIN_CE,
+                        PIN_MISO,
+                        PIN_CE,
                         PIN_CS);
     // 1. Configure RF_CH Default channel 2
     nrfdevice.SetChannel(2);
@@ -165,9 +166,9 @@ int main()
     // 3. Configure Data Rate and Power
     nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
     // 4. Program TX Address
-    // nrfdevice.SetTransmitAddress(0xE7E7E7E7E7);
+    nrfdevice.SetTransmitAddress(0xE8E8E8E8E8);
     // // 5. Program RX pipe 0 address- when auto ack enabled RX_ADDR_p0 = TX_ADDR
-    // nrfdevice.SetPipe0Address(0xE7E7E7E7E7);
+    nrfdevice.SetPipe0Address(0xE8E8E8E8E8);
     // 6. Enable Data Pipe 0
     nrfdevice.EnableDataPipe(0);
     // 7. Enable Auto Ack of Data Pipe 0

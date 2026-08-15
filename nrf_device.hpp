@@ -114,7 +114,7 @@ public:
 
     bool SetPipe0Address(uint64_t address)
     {
-        rx_addr_p0_register.SetRx_ADDR_P0();
+        rx_addr_p0_register.SetRx_ADDR_P0(address);
         return true;
     }
 

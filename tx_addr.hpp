@@ -15,6 +15,7 @@ public:
     bool SetTx_ADDR(uint64_t address = 0xE7E7E7E7E7)
     {
         TX_ADDR = address;
+        this->WriteRegisterValue(TX_ADDR);
         return true;
         // Todo
         //  WriteRegisterValue()
