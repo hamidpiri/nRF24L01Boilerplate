@@ -15,10 +15,13 @@ public:
     bool SetTx_ADDR(uint64_t address = 0xE7E7E7E7E7)
     {
         TX_ADDR = address;
-        this->WriteRegisterValue(TX_ADDR);
+        uint8_t data[5];
+        for (int i = 0; i < 5; i++)
+        {
+            data[i] = (TX_ADDR >> (i * 8)) & 0xFF;
+        }
+        WriteRegisterBytes(data, 5);
         return true;
-        // Todo
-        //  WriteRegisterValue()
     }
 
 private:

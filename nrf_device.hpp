@@ -112,17 +112,6 @@ public:
         return true;
     }
 
-    bool SetPipe0Address(uint64_t address)
-    {
-        rx_addr_p0_register.SetRx_ADDR_P0(address);
-        return true;
-    }
-
-    bool SetPipe0Width(int pipe0Width)
-    {
-        rx_pw_p0_register.SetRX_PW_P0(pipe0Width);
-        return true;
-    }
     // Sets data rate either 1Mbps or 2Mbps
     bool SetPowerAndDataRate(uint8_t power, RF_DR rf_rate)
     {
@@ -144,14 +133,21 @@ public:
         return true;
     }
 
+    bool SetPipe0Address(uint64_t address)
+    {
+        rx_addr_p0_register.SetRx_ADDR_P0(address);
+        return true;
+    }
+
     bool SetTransmitAddress(uint64_t address)
     {
         tx_addr_register.SetTx_ADDR(address);
         return true;
     }
-    bool SetPipe0Width(uint8_t width)
+
+    bool SetPipe0Width(uint64_t pipe0Width)
     {
-        rx_pw_p0_register.SetRX_PW_P0(width);
+        rx_pw_p0_register.SetRX_PW_P0(pipe0Width);
         return true;
     }
 

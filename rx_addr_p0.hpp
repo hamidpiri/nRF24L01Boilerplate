@@ -13,7 +13,12 @@ public:
     bool SetRx_ADDR_P0(uint64_t address = 0xE7E7E7E7E7)
     {
         RX_ADDR_P0 = address;
-        this->WriteRegisterValue(RX_ADDR_P0);
+        uint8_t data[5];
+        for (int i = 0; i < 5; i++)
+        {
+            data[i] = (RX_ADDR_P0 >> (i * 8)) & 0xFF;
+        }
+        WriteRegisterBytes(data, 5);
         return true;
     }
 

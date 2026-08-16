@@ -72,8 +72,6 @@ public:
         uint8_t nop = NOP;
         static uint8_t buffer_Read[8];
         uint8_t cmd = W_REGISTER | (address & 0x1F); // 0B00100000; 0x20
-        // printf("CMD is: 0x%02X \n", cmd);
-        // printf("Writing to Register 0x%02X Value: 0x%02X...\n", address, value);
 
         csn_low();
         spi_write_read_blocking(SPI_PORT, &cmd, &buffer_Read[0], 1);
@@ -83,5 +81,34 @@ public:
 
         // printf("Writing Success!\n");
         return 0;
+    }
+
+    void WriteRegisterBytes(const uint8_t *data, size_t length)
+    {
+        uint8_t nop = NOP;
+        uint8_t cmd = W_REGISTER | (this->address & 0x1F); // 0B00100000; 0x20
+        uint8_t status;
+        csn_low();
+        spi_write_read_blocking(SPI_PORT, &cmd, &status, 1);
+        spi_write_blocking(SPI_PORT, data, length);
+        csn_high();
+    }
+
+    void ReadRegisterBytes(uint8_t *data, size_t length)
+    {
+        uint8_t cmd = R_REGISTER | (this->address & 0x1F);
+        uint8_t status;
+
+        csn_low();
+
+        spi_write_read_blocking(SPI_PORT, &cmd, &status, 1);
+
+        for (size_t i = 0; i < length; i++)
+        {
+            uint8_t nop = NOP;
+            spi_write_read_blocking(SPI_PORT, &nop, &data[i], 1);
+        }
+
+        csn_high();
     }
 };

@@ -162,7 +162,7 @@ int main()
     // 1. Configure RF_CH Default channel 2
     nrfdevice.SetChannel(2);
     // 2. Configure address width
-    // nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
+    nrfdevice.SetAddressWidth(setupaw::addressWidth::_5bytes);
     // 3. Configure Data Rate and Power
     nrfdevice.SetPowerAndDataRate(nrfdevice::RF_PWR::_0dbm, nrfdevice::RF_DR::oneMbps);
     // 4. Program TX Address
@@ -200,6 +200,18 @@ int main()
         // printf("STATUS Register Value: 0x%02X\n", nrfdevice.status_register.ReadRegisterValue());
         while (true)
         {
+            uint8_t data[5];
+            nrfdevice.rx_addr_p0_register.ReadRegisterBytes(data, 5);
+            printf("ADDR: ");
+            for (int i = 0; i < 5; i++)
+                printf("%02X ", data[i]);
+            printf("\n");
+            nrfdevice.tx_addr_register.ReadRegisterBytes(data, 5);
+            printf("ADDR: ");
+            for (int i = 0; i < 5; i++)
+                printf("%02X ", data[i]);
+            printf("\n");
+
             if (nrfdevice.IsDataTransmitted())
             {
                 gpio_put(LED_PIN, 1);
